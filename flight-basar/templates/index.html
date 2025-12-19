@@ -30,7 +30,9 @@
           <input type="text" placeholder="z.B. Zürich" />
         </div>
         <div class="field" style="justify-content:flex-end">
-          <button>Flüge suchen</button>
+            <button id="searchBtn" type="button">Flüge suchen</button>
+          </div>
+          Flüge suchen</button>
         </div>
       </div>
 
@@ -62,5 +64,20 @@
       </div>
     </aside>
   </main>
+
+          <script>
+            async function callSearchApi() {
+              try {
+                const res = await fetch('/flights/berlin/zürich', { method: 'GET' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                alert(JSON.stringify(data, null, 2));
+              } catch (err) {
+                alert('Fehler: ' + err.message);
+              }
+            }
+
+            document.getElementById('searchBtn')?.addEventListener('click', callSearchApi);
+          </script>
 </body>
 </html>
