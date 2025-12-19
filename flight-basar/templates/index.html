@@ -1,16 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <title>Flight Basar</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flug Basar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
 </head>
 <body>
+  <header>
+    <h1>✈ Flug Basar</h1>
+    <div class="header-actions">
+      <button class="secondary">Route speichern</button>
+      <button class="secondary">Gespeicherte Routen</button>
+    </div>
+  </header>
 
-  <main class="container">
-    <h1>Flight Basar</h1>
-    <p>Dein Flugbasar im eigenen Repo</p>
+  <main>
+    <section class="search-card">
+      <div class="search-fields">
+        <div class="field">
+          <label>Startort</label>
+          <input type="text" placeholder="z.B. Basel" />
+        </div>
+        <div class="field">
+          <label>Zielort</label>
+          <input type="text" placeholder="z.B. Zürich" />
+        </div>
+        <div class="field" style="justify-content:flex-end">
+          <button>Flüge suchen</button>
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="result-row">
+          <strong>Basel</strong>
+          <strong>Zürich</strong>
+          <span class="badge">20 min</span>
+          <button>Ticket kaufen</button>
+        </div>
+        <div class="result-row">
+          <strong>Genf</strong>
+          <strong>Zürich</strong>
+          <span class="badge">45 min</span>
+          <button>Ticket kaufen</button>
+        </div>
+      </div>
+    </section>
+
+    <aside>
+      <div class="info-card">
+        <h3>🌤 Wetter in Zürich</h3>
+        <p>Viel Sonne und ein paar lockere Wolken. Perfekt für einen Städtetrip.</p>
+      </div>
+
+      <div class="info-card">
+        <h3>📍 Sehenswürdigkeiten</h3>
+        <p>Unbedingt das Kunsthaus Zürich, die Altstadt und den Zürichsee besuchen.</p>
+      </div>
+    </aside>
   </main>
-
 </body>
 </html>
