@@ -4,10 +4,9 @@ from dotenv import load_dotenv
 from datetime import datetime
 
 
+load_dotenv()
 BASE_URL = "http://api.aviationstack.com/v1"
 API_KEY = os.getenv("AVIATIONSTACK_API_KEY")
-load_dotenv()
-
 def call_flight_api(departure_destination: str, arrival_destination: str, limit: int = 10):
     if not API_KEY:
         raise RuntimeError("AVIATIONSTACK_API_KEY ist nicht gesetzt")
@@ -23,7 +22,9 @@ def call_flight_api(departure_destination: str, arrival_destination: str, limit:
     r = requests.get(url, params=params)
     r.raise_for_status()
 
-    return filter_necessary_infos
+    response_data = r.json()
+    flights_data = response_data.get("data", [])
+    return filter_necessary_infos(flights_data)
 
 def format_time(iso_str: str) -> str:
     return datetime.fromisoformat(iso_str.replace("Z", "+00:00")).strftime("%H:%M")
@@ -31,6 +32,7 @@ def format_time(iso_str: str) -> str:
 def filter_necessary_infos(flights: list[dict]) -> list[dict]:
     simplified = []
     print("Filtering necessary infos...")
+
     for f in flights:
         simplified.append({
             "from": f["departure"]["airport"],
