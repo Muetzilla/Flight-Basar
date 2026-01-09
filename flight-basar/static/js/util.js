@@ -10,7 +10,7 @@ async function callSearchApi() {
     // alert(JSON.stringify(data, null, 2));
     renderFlights(data, departure_destination_selector_value, arrival_destination_selector_value);
   } catch (err) {
-    alert('Fehler: ' + err.message);
+    alert("Bei der Suche der Flüge von " + getAirportName(departure_destination_selector_value) + "nach " + getAirportName(arrival_destination_selector_value) +" ist ein Fehler aufgetreten. Möglicherweise gibt es keine Flüge zwischen diesen Orten");
   }
 }
 function renderFlights(flights, departure_destination_selector_value, arrival_destination_selector_value) {
