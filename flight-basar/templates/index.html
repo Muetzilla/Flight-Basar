@@ -21,46 +21,26 @@
     <section class="search-card">
       <div class="search-fields">
         <div class="field">
-        <div class="field">
           <label for="departureAirport">Startort</label>
+          <input id="departureSearch" type="text" placeholder="Suche Startflughafen" aria-label="Suche Startflughafen" />
           <select id="departureAirport" name="departureAirport">
-            <option value="" disabled selected>Wähle Startflughafen</option>
-            <option value="BSL">Basel</option>
-            <option value="ZRH">Zürich</option>
-            <option value="GVA">Genf</option>
-            <option value="EDI">Edinburgh</option>
+            <!-- Optionen werden dynamisch geladen -->
           </select>
         </div>
         <div class="field">
           <label for="arrivalAirport">Zielort</label>
+          <input id="arrivalSearch" type="text" placeholder="Suche Zielflughafen" aria-label="Suche Zielflughafen" />
           <select id="arrivalAirport" name="arrivalAirport">
-            <option value="" disabled selected>Wähle Zielflughafen</option>
-            <option value="BSL">Basel</option>
-            <option value="ZRH">Zürich</option>
-            <option value="GVA">Genf</option>
-            <option value="EDI">Edinburgh</option>
+            <!-- Optionen werden dynamisch geladen -->
           </select>
         </div>
         <div class="field" style="justify-content:flex-end">
-            <button id="searchBtn" type="button">Flüge suchen</button>
-          </div>
-          Flüge suchen</button>
+          <button id="searchBtn" type="button">Flüge suchen</button>
         </div>
       </div>
 
       <div class="results">
-        <!--<div class="result-row">
-          <strong>Basel</strong>
-          <strong>Zürich</strong>
-          <span class="badge">20 min</span>
-          <button>Ticket kaufen</button>
-        </div>
-        <div class="result-row">
-          <strong>Genf</strong>
-          <strong>Zürich</strong>
-          <span class="badge">45 min</span>
-          <button>Ticket kaufen</button>
-        </div>-->
+        <!-- Ergebnisse werden dynamisch gerendert -->
       </div>
     </section>
 

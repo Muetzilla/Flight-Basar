@@ -1,0 +1,23 @@
+[
+  { "code": "", "name": "Wähle Flughafen" },
+  { "code": "BSL", "name": "Basel" },
+  { "code": "ZRH", "name": "Zürich" },
+  { "code": "GVA", "name": "Genf" },
+  { "code": "EDI", "name": "Edinburgh" },
+  { "code": "BER", "name": "Berlin" },
+  { "code": "ORY", "name": "Paris (Orly)" },
+  { "code": "CDG", "name": "Paris (CDG)" },
+  { "code": "FRA", "name": "Frankfurt" },
+  { "code": "MUC", "name": "München" },
+  { "code": "JFK", "name": "New York (JFK)" },
+  { "code": "LHR", "name": "London (Heathrow)" },
+  { "code": "LGW", "name": "London (Gatwick)" },
+  { "code": "AMS", "name": "Amsterdam" },
+  { "code": "MAD", "name": "Madrid" },
+  { "code": "BCN", "name": "Barcelona" },
+  { "code": "VIE", "name": "Wien" },
+  { "code": "BRU", "name": "Brüssel" },
+  { "code": "CPH", "name": "Kopenhagen" },
+  { "code": "OSL", "name": "Oslo" },
+  { "code": "STO", "name": "Stockholm" }
+]

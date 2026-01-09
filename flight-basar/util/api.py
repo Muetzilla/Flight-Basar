@@ -24,6 +24,7 @@ def call_flight_api(departure_destination: str, arrival_destination: str, limit:
 
     response_data = r.json()
     flights_data = response_data.get("data", [])
+    print(flights_data)
     return filter_necessary_infos(flights_data)
 
 def format_time(iso_str: str) -> str:
@@ -41,6 +42,7 @@ def filter_necessary_infos(flights: list[dict]) -> list[dict]:
             "flight": f["flight"]["iata"],
             "departureTime": format_time(f["departure"]["scheduled"]),
             "arrivalTime": format_time(f["arrival"]["scheduled"]),
+            "flightDate": f["flight_date"],
         })
 
     return simplified
