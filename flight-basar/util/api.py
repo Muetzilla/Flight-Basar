@@ -45,4 +45,5 @@ def filter_necessary_infos(flights: list[dict]) -> list[dict]:
             "flightDate": f["flight_date"],
         })
 
+
     return simplified

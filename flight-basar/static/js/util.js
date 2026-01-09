@@ -8,12 +8,12 @@ async function callSearchApi() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     // alert(JSON.stringify(data, null, 2));
-    renderFlights(data);
+    renderFlights(data, departure_destination_selector_value, arrival_destination_selector_value);
   } catch (err) {
     alert('Fehler: ' + err.message);
   }
 }
-function renderFlights(flights) {
+function renderFlights(flights, departure_destination_selector_value, arrival_destination_selector_value) {
   const resultsDiv = document.querySelector(".results");
   resultsDiv.innerHTML = "";
 
@@ -23,7 +23,7 @@ function renderFlights(flights) {
 
     row.innerHTML = `
       <div class="route">
-        <strong>${flight.from}</strong> → <strong>${flight.to}</strong>
+        <strong>${getAirportName(departure_destination_selector_value)}</strong> ${flight.from} → <strong>${getAirportName(arrival_destination_selector_value)}</strong> ${flight.to}
       </div>
 
       <div class="time">
@@ -38,6 +38,11 @@ function renderFlights(flights) {
 }
 
 let ALL_AIRPORTS = [];
+
+function getAirportName(code) {
+  const airport = ALL_AIRPORTS.find(a => a.code === code);
+  return airport ? airport.name : code;
+}
 
 function renderAirportOptions(selectEl, airports) {
   if (!selectEl) return;
