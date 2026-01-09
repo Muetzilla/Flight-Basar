@@ -169,3 +169,10 @@
         row-gap: 10px;
       }
     }
+
+.search-select-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
