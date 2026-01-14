@@ -1,18 +1,25 @@
 async function callSearchApi() {
-    let departure_destination_selector_element = document.getElementById("departureAirport");
-    let departure_destination_selector_value = departure_destination_selector_element.value;
-    let arrival_destination_selector_element = document.getElementById("arrivalAirport");
-    let arrival_destination_selector_value = arrival_destination_selector_element.value;
+    const departureInput = document.getElementById("departureSearch");
+    const arrivalInput = document.getElementById("arrivalSearch");
+
+    const departureAirportCode = getAirportCode(departureInput.value);
+    const arrivalAirportCode = getAirportCode(arrivalInput.value);
+
+    if (!departureAirportCode || !arrivalAirportCode) {
+        alert("Bitte wählen Sie einen gültigen Start- und Zielflughafen aus der Liste.");
+        return;
+    }
+
   try {
-    const res = await fetch('/flights/'+departure_destination_selector_value+'/' + arrival_destination_selector_value, { method: 'GET' });
+    const res = await fetch('/flights/'+departureAirportCode+'/' + arrivalAirportCode, { method: 'GET' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    // alert(JSON.stringify(data, null, 2));
-    renderFlights(data, departure_destination_selector_value, arrival_destination_selector_value);
+    renderFlights(data, departureAirportCode, arrivalAirportCode);
   } catch (err) {
-    alert("Bei der Suche der Flüge von " + getAirportName(departure_destination_selector_value) + "nach " + getAirportName(arrival_destination_selector_value) +" ist ein Fehler aufgetreten. Möglicherweise gibt es keine Flüge zwischen diesen Orten");
+    alert("Bei der Suche der Flüge von " + getAirportName(departureAirportCode) + "nach " + getAirportName(arrivalAirportCode) +" ist ein Fehler aufgetreten. Möglicherweise gibt es keine Flüge zwischen diesen Orten");
   }
 }
+
 function renderFlights(flights, departure_destination_selector_value, arrival_destination_selector_value) {
   const resultsDiv = document.querySelector(".results");
   resultsDiv.innerHTML = "";
@@ -44,18 +51,18 @@ function getAirportName(code) {
   return airport ? airport.name : code;
 }
 
-function renderAirportOptions(selectEl, airports) {
-  if (!selectEl) return;
-  selectEl.innerHTML = '';
-  airports.forEach(({ code, name }) => {
+function getAirportCode(airportName) {
+  const airport = ALL_AIRPORTS.find(a => a.name.toLowerCase() === airportName.toLowerCase());
+  return airport ? airport.code : null;
+}
+
+function renderAirportOptions(dataListEl, airports) {
+  if (!dataListEl) return;
+  dataListEl.innerHTML = '';
+  airports.forEach(({ name }) => {
     const opt = document.createElement('option');
-    opt.value = code;
-    opt.textContent = name;
-    if (code === '') {
-      opt.disabled = true;
-      opt.selected = true;
-    }
-    selectEl.appendChild(opt);
+    opt.value = name;
+    dataListEl.appendChild(opt);
   });
 }
 
@@ -73,27 +80,26 @@ async function loadAirports() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     ALL_AIRPORTS = await res.json();
 
-    const depSelect = document.getElementById('departureAirport');
-    const arrSelect = document.getElementById('arrivalAirport');
-    // Initiales Rendering
-    renderAirportOptions(depSelect, ALL_AIRPORTS);
-    renderAirportOptions(arrSelect, ALL_AIRPORTS);
+    const depList = document.getElementById('departureAirportList');
+    const arrList = document.getElementById('arrivalAirportList');
 
-    // Suchevents binden
+    renderAirportOptions(depList, ALL_AIRPORTS);
+    renderAirportOptions(arrList, ALL_AIRPORTS);
+
     const depSearch = document.getElementById('departureSearch');
     const arrSearch = document.getElementById('arrivalSearch');
+
     depSearch?.addEventListener('input', () => {
-      renderAirportOptions(depSelect, filterAirports(depSearch.value));
+      renderAirportOptions(depList, filterAirports(depSearch.value));
     });
     arrSearch?.addEventListener('input', () => {
-      renderAirportOptions(arrSelect, filterAirports(arrSearch.value));
+      renderAirportOptions(arrList, filterAirports(arrSearch.value));
     });
+
   } catch (err) {
     console.error('Airports laden fehlgeschlagen:', err);
   }
 }
-
-// Beim Laden der Seite Dropdowns befüllen und Suche aktivieren
 document.addEventListener('DOMContentLoaded', () => {
   loadAirports();
   document.getElementById('searchBtn')?.addEventListener('click', callSearchApi);

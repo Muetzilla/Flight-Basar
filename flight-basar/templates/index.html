@@ -21,18 +21,16 @@
     <section class="search-card">
       <div class="search-fields">
         <div class="field">
-          <label for="departureAirport">Startort</label>
-          <input id="departureSearch" type="text" placeholder="Suche Startflughafen" aria-label="Suche Startflughafen" />
-          <select id="departureAirport" name="departureAirport">
-            <!-- Optionen werden dynamisch geladen -->
-          </select>
+          <label for="departureSearch">Startort</label>
+          <input id="departureSearch" type="text" placeholder="Suche Startflughafen" aria-label="Suche Startflughafen" list="departureAirportList"/>
+          <datalist id="departureAirportList">
+          </datalist>
         </div>
         <div class="field">
-          <label for="arrivalAirport">Zielort</label>
-          <input id="arrivalSearch" type="text" placeholder="Suche Zielflughafen" aria-label="Suche Zielflughafen" />
-          <select id="arrivalAirport" name="arrivalAirport">
-            <!-- Optionen werden dynamisch geladen -->
-          </select>
+          <label for="arrivalSearch">Zielort</label>
+          <input id="arrivalSearch" type="text" placeholder="Suche Zielflughafen" aria-label="Suche Zielflughafen" list="arrivalAirportList"/>
+          <datalist id="arrivalAirportList">
+          </datalist>
         </div>
         <div class="field" style="justify-content:flex-end">
           <button id="searchBtn" type="button">Flüge suchen</button>
@@ -40,7 +38,6 @@
       </div>
 
       <div class="results">
-        <!-- Ergebnisse werden dynamisch gerendert -->
       </div>
     </section>
 
