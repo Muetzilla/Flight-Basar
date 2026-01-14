@@ -21,6 +21,22 @@ async function callSearchApi() {
     }
 }
 
+function getTimezoneAbbreviation(dateString, timeZone) {
+    if (!dateString || !timeZone) return '';
+    const date = new Date(dateString);
+    const options = {
+        timeZone: timeZone,
+        timeZoneName: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    const formatter = new Intl.DateTimeFormat([], options);
+    const parts = formatter.formatToParts(date);
+    const tzAbbr = parts.find(p => p.type === 'timeZoneName')?.value || '';
+    const time = new Date(dateString).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', timeZone: timeZone});
+    return `${time} (${tzAbbr})`;
+}
+
 function renderFlights(flights, departure_destination_selector_value, arrival_destination_selector_value) {
   const resultsDiv = document.querySelector(".results");
   resultsDiv.innerHTML = "";
@@ -29,13 +45,16 @@ function renderFlights(flights, departure_destination_selector_value, arrival_de
     const row = document.createElement("div");
     row.className = "flight-row";
 
+    const departureTime = getTimezoneAbbreviation(flight.departure.scheduled, flight.departure.timezone);
+    const arrivalTime = getTimezoneAbbreviation(flight.arrival.scheduled, flight.arrival.timezone);
+
     row.innerHTML = `
       <div class="route">
         <strong>${getAirportName(departure_destination_selector_value)}</strong> (${flight.departure.iata}) → <strong>${getAirportName(arrival_destination_selector_value)}</strong> (${flight.arrival.iata})
       </div>
 
       <div class="time">
-        ${new Date(flight.departure.scheduled).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${flight.departure.timezone}) – ${new Date(flight.arrival.scheduled).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${flight.arrival.timezone}) | Abflug: ${new Date(flight.departure.scheduled).toLocaleDateString()}
+        ${departureTime} – ${arrivalTime} | Abflug: ${new Date(flight.departure.scheduled).toLocaleDateString()}
       </div>
 
       <button class="buy-btn">Flug kopieren</button>
