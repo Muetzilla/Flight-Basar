@@ -17,7 +17,8 @@ async function callSearchApi() {
     renderFlights(data, departureAirportCode, arrivalAirportCode);
   } catch (err) {
     alert("Bei der Suche der Flüge von " + getAirportName(departureAirportCode) + "nach " + getAirportName(arrivalAirportCode) +" ist ein Fehler aufgetreten. Möglicherweise gibt es keine Flüge zwischen diesen Orten");
-  }
+    console.error(err)
+    }
 }
 
 function renderFlights(flights, departure_destination_selector_value, arrival_destination_selector_value) {
@@ -30,15 +31,29 @@ function renderFlights(flights, departure_destination_selector_value, arrival_de
 
     row.innerHTML = `
       <div class="route">
-        <strong>${getAirportName(departure_destination_selector_value)}</strong> ${flight.from} → <strong>${getAirportName(arrival_destination_selector_value)}</strong> ${flight.to}
+        <strong>${getAirportName(departure_destination_selector_value)}</strong> (${flight.departure.iata}) → <strong>${getAirportName(arrival_destination_selector_value)}</strong> (${flight.arrival.iata})
       </div>
 
       <div class="time">
-        ${flight.departureTime} – ${flight.arrivalTime} | Start Date ${flight.flightDate}
+        ${new Date(flight.departure.scheduled).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${flight.departure.timezone}) – ${new Date(flight.arrival.scheduled).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${flight.arrival.timezone}) | Abflug: ${new Date(flight.departure.scheduled).toLocaleDateString()}
       </div>
 
-      <button class="buy-btn">Ticket kaufen</button>
+      <button class="buy-btn">Flug kopieren</button>
     `;
+
+    const copyButton = row.querySelector('.buy-btn');
+    copyButton.addEventListener('click', () => {
+      const iata = flight.flight.iata;
+      navigator.clipboard.writeText(iata).then(() => {
+        copyButton.textContent = 'Kopiert!';
+        setTimeout(() => {
+          copyButton.textContent = 'Flug kopieren';
+        }, 2000);
+      }).catch(err => {
+        console.error('Fehler beim Kopieren:', err);
+        alert('Konnte den Flug nicht kopieren.');
+      });
+    });
 
     resultsDiv.appendChild(row);
   });

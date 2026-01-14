@@ -36,13 +36,11 @@ def filter_necessary_infos(flights: list[dict]) -> list[dict]:
 
     for f in flights:
         simplified.append({
-            "from": f["departure"]["airport"],
-            "to": f["arrival"]["airport"],
-            "airline": f["airline"]["name"],
-            "flight": f["flight"]["iata"],
-            "departureTime": format_time(f["departure"]["scheduled"]),
-            "arrivalTime": format_time(f["arrival"]["scheduled"]),
-            "flightDate": f["flight_date"],
+            "departure": f["departure"],
+            "arrival": f["arrival"],
+            "airline": f["airline"],
+            "flight": f["flight"],
+            "flight_date": f["flight_date"],
         })
 
     simplified.reverse()
