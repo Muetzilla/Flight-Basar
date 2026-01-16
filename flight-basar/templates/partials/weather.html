@@ -1,0 +1,33 @@
+<section class="weather-wide">
+  <div class="info-card weather-panel">
+    <div class="weather-header">
+      <h3 id="weatherTitle">🌤 Wetter</h3>
+
+      <div class="weather-controls">
+        <label for="citySelect">Stadt</label>
+        <select id="citySelect">
+          {% for c in cities %}
+            <option value="{{ c }}" {% if c == "Zürich" %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="weather-now">
+      <div class="weather-now-left">
+        <div id="weatherIcon" class="weather-icon">⛅</div>
+        <div>
+          <div id="weatherNowTemp" class="weather-temp">–°C</div>
+          <div id="weatherText" class="weather-desc">Lade Wetterdaten...</div>
+        </div>
+      </div>
+      <div id="weatherMeta" class="weather-meta"></div>
+    </div>
+
+    <div id="forecastList" class="forecast-cards"></div>
+
+    <div class="weather-attrib">
+      Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open Meteo</a>
+    </div>
+  </div>
+</section>
