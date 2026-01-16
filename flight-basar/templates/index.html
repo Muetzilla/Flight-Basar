@@ -17,48 +17,23 @@
   </header>
 
   <main>
-    <section class="search-card">
-      <div class="search-fields">
-        <div class="field">
-          <label for="departureSearch">Startort</label>
-          <input id="departureSearch" type="text" placeholder="Suche Startflughafen" aria-label="Suche Startflughafen" list="departureAirportList"/>
-          <datalist id="departureAirportList">
-          </datalist>
-        </div>
-        <div class="field">
-          <label for="arrivalSearch">Zielort</label>
-          <input id="arrivalSearch" type="text" placeholder="Suche Zielflughafen" aria-label="Suche Zielflughafen" list="arrivalAirportList"/>
-          <datalist id="arrivalAirportList">
-          </datalist>
-        </div>
-        <div class="field" style="justify-content:flex-end">
-          <button id="searchBtn" type="button">Flüge suchen</button>
-        </div>
-      </div>
 
-      <div class="results">
-      </div>
-    </section>
-
-   
-{% block content %}
-<main class="layout">
-  {% include "partials/flight_search.html" %}
-  {% include "partials/weather.html" %}
-  {% include "partials/places.html" %}
-</main>
-{% endblock %}
+      {% block content %}
+      {% include "partials/flight_search.html" %}
+      {% include "partials/weather.html" %}
+      {% include "partials/places.html" %}
+      {% endblock %}
 
   {% block scripts %}
-    <script>
-      window.APP_CONFIG = {
-        cities: {{ cities|tojson }},
-        defaultCity: "Zürich"
-      };
-    </script>
+<!--    <script>-->
+<!--      window.APP_CONFIG = {-->
+<!--        cities: {{ cities|tojson }},-->
+<!--        defaultCity: "Zürich"-->
+<!--      };-->
+<!--    </script>-->
   {% endblock %}
   </main>
-    <script src="{{ url_for('static', filename='js/util.js') }}"></script>
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
+<!--    <script src="{{ url_for('static', filename='js/util.js') }}"></script>-->
+<!--    <script src="{{ url_for('static', filename='app.js') }}"></script>-->
 </body>
 </html>

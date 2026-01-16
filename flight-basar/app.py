@@ -12,10 +12,11 @@ app.register_blueprint(places_bp)
 
 @app.get("/")
 def index():
+    WETTER_API_KEY = os.getenv("GEOAPIFY_API_KEY")
     return render_template(
         "index.html",
         cities=get_cities(),
-        geoapify_key=os.environ.get("GEOAPIFY_API_KEY", "")
+        geoapify_key=WETTER_API_KEY
     )
 
 @app.get("/flights/<departure_destination>/<arrival_destination>")

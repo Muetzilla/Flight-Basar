@@ -1,5 +1,5 @@
-const GEOAPIFY_KEY = document.body.dataset.geoapifyKey;
-const DEFAULT_CITY = window.APP_CONFIG?.defaultCity || "Zürich";
+// const GEOAPIFY_KEY = document.body.dataset.geoapifyKey;
+// const DEFAULT_CITY = window.APP_CONFIG?.defaultCity || "Zürich";
 
 let map = null;
 let markerLayer = null;
