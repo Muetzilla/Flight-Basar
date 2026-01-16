@@ -1,11 +1,22 @@
-from flask import Flask, render_template, jsonify
+import os
+from flask import Flask, render_template
+
+from weatherapi import weather_bp, get_cities
+from placesapi import places_bp
 from util.api import call_flight_api, filter_necessary_infos
+
 app = Flask(__name__)
 
+app.register_blueprint(weather_bp)
+app.register_blueprint(places_bp)
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return render_template(
+        "index.html",
+        cities=get_cities(),
+        geoapify_key=os.environ.get("GEOAPIFY_API_KEY", "")
+    )
 
 @app.get("/flights/<departure_destination>/<arrival_destination>")
 def get_flights(departure_destination, arrival_destination):
