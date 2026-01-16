@@ -7,11 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-
 </head>
 <body>
   <header>
-    <h1>✈ Flug Basar</h1>
+    <h1>✈ Flight Basar</h1>
     <div class="header-actions">
       <button class="secondary">Route speichern</button>
       <button class="secondary">Gespeicherte Routen</button>
@@ -22,31 +21,23 @@
     <section class="search-card">
       <div class="search-fields">
         <div class="field">
-          <label>Startort</label>
-          <input type="text" placeholder="z.B. Basel" />
+          <label for="departureSearch">Startort</label>
+          <input id="departureSearch" type="text" placeholder="Suche Startflughafen" aria-label="Suche Startflughafen" list="departureAirportList"/>
+          <datalist id="departureAirportList">
+          </datalist>
         </div>
         <div class="field">
-          <label>Zielort</label>
-          <input type="text" placeholder="z.B. Zürich" />
+          <label for="arrivalSearch">Zielort</label>
+          <input id="arrivalSearch" type="text" placeholder="Suche Zielflughafen" aria-label="Suche Zielflughafen" list="arrivalAirportList"/>
+          <datalist id="arrivalAirportList">
+          </datalist>
         </div>
         <div class="field" style="justify-content:flex-end">
-          <button>Flüge suchen</button>
+          <button id="searchBtn" type="button">Flüge suchen</button>
         </div>
       </div>
 
       <div class="results">
-        <div class="result-row">
-          <strong>Basel</strong>
-          <strong>Zürich</strong>
-          <span class="badge">20 min</span>
-          <button>Ticket kaufen</button>
-        </div>
-        <div class="result-row">
-          <strong>Genf</strong>
-          <strong>Zürich</strong>
-          <span class="badge">45 min</span>
-          <button>Ticket kaufen</button>
-        </div>
       </div>
     </section>
 
@@ -62,5 +53,6 @@
       </div>
     </aside>
   </main>
+    <script src="{{ url_for('static', filename='js/util.js') }}"></script>
 </body>
 </html>
