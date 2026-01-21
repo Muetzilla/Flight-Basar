@@ -1,5 +1,5 @@
-// const GEOAPIFY_KEY = document.body.dataset.geoapifyKey;
-// const DEFAULT_CITY = window.APP_CONFIG?.defaultCity || "Zürich";
+const GEOAPIFY_KEY = document.body.dataset.geoapifyKey;
+const DEFAULT_CITY = window.APP_CONFIG?.defaultCity || "Zürich";
 
 let map = null;
 let markerLayer = null;
@@ -98,7 +98,6 @@ function initMap(center) {
 
   const style = "osm-bright";
   const tilesUrl = `https://maps.geoapify.com/v1/tile/${style}/{z}/{x}/{y}.png?apiKey=${encodeURIComponent(GEOAPIFY_KEY)}`;
-
   L.tileLayer(tilesUrl, {
     maxZoom: 20,
     attribution: 'Map data © OpenStreetMap contributors · Powered by Geoapify'

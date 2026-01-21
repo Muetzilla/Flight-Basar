@@ -7,7 +7,7 @@ places_bp = Blueprint("places", __name__)
 
 # Nimm hier dieselbe City Liste wie beim Wetter
 CITY_COORDS = {
-    "Zürich": {"lat": 47.3769, "lon": 8.5417},
+    "Zurich": {"lat": 47.3769, "lon": 8.5417},
     "Basel": {"lat": 47.5596, "lon": 7.5886},
     "Bern": {"lat": 46.9480, "lon": 7.4474},
     "Genf": {"lat": 46.2044, "lon": 6.1432},
@@ -20,8 +20,8 @@ DEFAULT_CATEGORIES = "tourism.sights,tourism.attraction"
 
 @places_bp.get("/api/places")
 def get_places():
-    city = request.args.get("city", "Zürich")
-    coords = CITY_COORDS.get(city, CITY_COORDS["Zürich"])
+    city = request.args.get("city", "Zurich")
+    coords = CITY_COORDS.get(city, CITY_COORDS["Zurich"])
     lat = coords["lat"]
     lon = coords["lon"]
 

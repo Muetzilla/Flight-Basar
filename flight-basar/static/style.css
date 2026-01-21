@@ -8,6 +8,12 @@
   --radius: 18px;
 }
 
+main{
+    width:95%;
+}
+.infos{
+    width:950px; !important;
+}
 *{ box-sizing: border-box; }
 
 body{
@@ -76,9 +82,10 @@ main.layout{
   align-items: start;
 }
 
+
 /* Suche bleibt schmal */
 .search-card{
-  max-width: 520px;
+  /*max-width: 520px;*/
   width: 100%;
 }
 
@@ -137,10 +144,10 @@ main.layout{
 
 /* Results */
 .results{
-  margin-top: 16px;
+  margin-top: 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7.5px;
 }
 
 .result-row{
@@ -177,9 +184,9 @@ main.layout{
       align-items: center;
       gap: 20px;
       background-color: #fff;
-      padding: 16px 20px;
+      padding: 8px 10px;
       border-radius: 12px;
-      margin-top: 16px;
+      margin-top: 4px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       border: 1px solid var(--border);
       transition: all 0.2s ease-in-out;
@@ -205,7 +212,7 @@ main.layout{
     }
 
     .flight-row .buy-btn {
-      background-color: var(--primary);
+      background-color: var(--primary);!important;
       color: white;
       padding: 8px 14px;
       border-radius: 8px;
