@@ -558,3 +558,13 @@ option {
    font-size: 18px;
   cursor: pointer;
 }
+
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+.homeButton{
+    text-decoration: none;
+    color: black;
+}

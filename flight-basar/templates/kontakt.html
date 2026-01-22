@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flug Basar Kontakt</title>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+ <header>
+    <a href="{{ url_for('index') }}" class="homeButton"> <h1>✈ Flug Basar</h1></a>
+  </header>
+<div class="center">
+<h1>Kontakt</h1>
+<button onclick="window.location.href='mailto:help@flightbasar.gov?subject=Problem%20mit%20dem%20Flight%20Basar'">
+   Kontaktieren sie uns via E-Mail
+</button>
+<h2>Schreiben sie uns eine Nachricht</h2>
+<form action="/kontakt" method="post">
+    <label>
+        Name:
+        <input type="text" name="name" required>
+    </label>
+    <br>
+
+    <label>
+        E-Mail:
+        <input type="email" name="email" required>
+    </label>
+    <br>
+
+    <label>
+        Nachricht:
+        <textarea name="nachricht" required></textarea>
+    </label>
+    <br>
+
+    <button type="submit">Absenden</button>
+</form>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <script>
+      alert("{{ messages[0] }}");
+    </script>
+  {% endif %}
+{% endwith %}
+</div>
+{% include "footer.html" %}
+
+</body>
+</html>

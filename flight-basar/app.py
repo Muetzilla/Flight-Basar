@@ -1,11 +1,15 @@
 import os
-from flask import Flask, render_template
+import json
+from datetime import datetime
+import hashlib
+from flask import Flask, render_template, request, flash, redirect, url_for
 
 from weatherapi import weather_bp, get_cities
 from placesapi import places_bp
 from util.api import call_flight_api, filter_necessary_infos
 
 app = Flask(__name__)
+app.secret_key = "geheim"
 
 app.register_blueprint(weather_bp)
 app.register_blueprint(places_bp)
@@ -27,6 +31,51 @@ def get_flights(departure_destination, arrival_destination):
     print(departure_destination, arrival_destination)
     print(flights)
     return flights
+
+@app.get("/help")
+def get_help():
+    return render_template("help.html")
+
+@app.get("/agb")
+def get_agb():
+    return render_template("agb.html")
+
+@app.get("/kontakt")
+def get_kontakt():
+    return render_template("kontakt.html")
+
+@app.get("/footer")
+def get_footer():
+    return render_template("footer.html")
+
+@app.post("/kontakt")
+def post_kontakt():
+    name = request.form.get("name")
+    email = request.form.get("email")
+    nachricht = request.form.get("nachricht")
+
+    timestamp = datetime.now().isoformat()
+
+    data = {
+        "name": name,
+        "email": email,
+        "nachricht": nachricht,
+        "timestamp": timestamp
+    }
+
+    hash_object = hashlib.md5(timestamp.encode())
+    hex_hash = hash_object.hexdigest()
+
+    if not os.path.exists("json"):
+        os.makedirs("json")
+
+    file_path = os.path.join("json", f"{hex_hash}_{timestamp.replace(':', '-')}.json")
+    with open(file_path, "w") as f:
+        json.dump(data, f, indent=4)
+
+
+    flash("Danke für deine Nachricht!", "success")
+    return redirect(url_for("get_kontakt"))
 
 if __name__ == "__main__":
     app.run(debug=True)

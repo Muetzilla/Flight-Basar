@@ -13,15 +13,13 @@
 
 <body data-geoapify-key="{{ geoapify_key|default('') }}">
   <header>
-    <h1>✈ Flug Basar</h1>
-    <div class="header-actions">
-      <button class="secondary" type="button">Route speichern</button>
-      <button class="secondary" type="button">Gespeicherte Routen</button>
-    </div>
+    <a href="{{ url_for('index') }}" class="homeButton"> <h1>✈ Flug Basar</h1></a>
   </header>
 
   {% block content %}{% endblock %}
 
   {% block scripts %}{% endblock %}
+    {% include "footer.html" %}
+
 </body>
 </html>
