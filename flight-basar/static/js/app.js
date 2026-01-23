@@ -1,8 +1,10 @@
-// const GEOAPIFY_KEY = document.body.dataset.geoapifyKey;
-// const DEFAULT_CITY = window.APP_CONFIG?.defaultCity || "Zürich";
+const GEOAPIFY_KEY = document.body.dataset.geoapifyKey || "";
+const DEFAULT_CITY = "Zürich";
 
 let map = null;
 let markerLayer = null;
+
+/* -------------------- HELPERS -------------------- */
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -13,7 +15,7 @@ function escapeHtml(s) {
     .replaceAll("'", "&#039;");
 }
 
-function codeToEmoji(code){
+function codeToEmoji(code) {
   if (code == null) return "❓";
   if (code === 0) return "☀️";
   if (code === 1) return "🌤️";
@@ -27,9 +29,17 @@ function codeToEmoji(code){
   return "❓";
 }
 
-/* -------- WEATHER -------- */
+function normalizeCityNameForPlaces(airportName) {
+  const s = (airportName || "").trim();
+  if (!s) return DEFAULT_CITY;
 
-async function loadWeather(city) {
+  // entfernt " (XYZ)" am Ende
+  return s.replace(/\s*\([^)]+\)\s*$/, "").trim();
+}
+
+/* -------------------- WEATHER (nur Ziel) -------------------- */
+
+async function loadWeatherForArrival() {
   const titleEl = document.getElementById("weatherTitle");
   const iconEl = document.getElementById("weatherIcon");
   const nowTempEl = document.getElementById("weatherNowTemp");
@@ -37,15 +47,31 @@ async function loadWeather(city) {
   const metaEl = document.getElementById("weatherMeta");
   const forecastEl = document.getElementById("forecastList");
 
-  titleEl.textContent = `🌤 Wetter in ${city}`;
+  if (!titleEl || !textEl || !forecastEl) return;
+
+  const arrivalInput = document.getElementById("arrivalSearch");
+  const rawArrival = arrivalInput?.value?.trim() || "";
+
+  // findAirport kommt aus util.js
+  const airport = (typeof findAirport === "function") ? findAirport(rawArrival) : null;
+
+  const label = airport ? airport.name : (rawArrival || "Zielort wählen");
+  titleEl.textContent = `🌤 Wetter am Ziel: ${label}`;
+
   textEl.textContent = "Lade Wetterdaten...";
   metaEl.textContent = "";
   forecastEl.innerHTML = "";
   nowTempEl.textContent = "–°C";
   iconEl.textContent = "⛅";
 
+  if (!airport || airport.lat == null || airport.lon == null) {
+    textEl.textContent = "Bitte wähle zuerst einen Zielort aus der Liste.";
+    return;
+  }
+
   try {
-    const res = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+    const url = `/api/weather?lat=${airport.lat}&lon=${airport.lon}&label=${encodeURIComponent(airport.name)}`;
+    const res = await fetch(url);
     const data = await res.json();
 
     if (!res.ok) {
@@ -59,7 +85,9 @@ async function loadWeather(city) {
     metaEl.textContent = `Wind: ${data.wind} km/h · Stand: ${data.time}`;
 
     const fmt = new Intl.DateTimeFormat("de-CH", {
-      weekday: "short", day: "2-digit", month: "2-digit"
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit"
     });
 
     forecastEl.innerHTML = (data.forecast || []).map(d => {
@@ -86,14 +114,20 @@ async function loadWeather(city) {
       `;
     }).join("");
 
-  } catch {
+  } catch (err) {
+    console.error(err);
     textEl.textContent = "Fehler beim Laden der Wetterdaten.";
   }
 }
 
-/* -------- PLACES + MAP -------- */
+/* -------------------- PLACES + MAP -------------------- */
 
 function initMap(center) {
+  if (typeof L === "undefined") {
+    console.error("Leaflet (L) ist nicht geladen. Prüfe base.html!");
+    return;
+  }
+
   map = L.map("poiMap", { scrollWheelZoom: false }).setView([center.lat, center.lon], 13);
 
   const style = "osm-bright";
@@ -101,18 +135,29 @@ function initMap(center) {
 
   L.tileLayer(tilesUrl, {
     maxZoom: 20,
-    attribution: 'Map data © OpenStreetMap contributors · Powered by Geoapify'
+    attribution: "Map data © OpenStreetMap contributors · Powered by Geoapify"
   }).addTo(map);
 
   markerLayer = L.layerGroup().addTo(map);
 }
 
-async function loadPlaces(city) {
+async function loadPlacesForArrival() {
   const list = document.getElementById("poiList");
+  const mapEl = document.getElementById("poiMap");
+  if (!list || !mapEl) return;
+
+  const arrivalInput = document.getElementById("arrivalSearch");
+  const rawArrival = arrivalInput?.value?.trim() || "";
+
+  const airport = (typeof findAirport === "function") ? findAirport(rawArrival) : null;
+
+  // Places braucht "City Name", nicht "JFK"
+  const cityName = normalizeCityNameForPlaces(airport ? airport.name : (rawArrival || DEFAULT_CITY));
+
   list.innerHTML = `<li class="poi-loading">Lade Sehenswürdigkeiten...</li>`;
 
   try {
-    const res = await fetch(`/api/places?city=${encodeURIComponent(city)}`);
+    const res = await fetch(`/api/places?city=${encodeURIComponent(cityName)}`);
     const data = await res.json();
 
     if (!res.ok) {
@@ -121,9 +166,9 @@ async function loadPlaces(city) {
     }
 
     if (!map) initMap(data.center);
-    map.setView([data.center.lat, data.center.lon], 13);
+    if (map) map.setView([data.center.lat, data.center.lon], 13);
 
-    markerLayer.clearLayers();
+    if (markerLayer) markerLayer.clearLayers();
     list.innerHTML = "";
 
     (data.places || []).forEach((p, i) => {
@@ -132,8 +177,11 @@ async function loadPlaces(city) {
       const title = escapeHtml(p.name);
       const addr = escapeHtml(p.formatted);
 
-      const m = L.marker([p.lat, p.lon]).addTo(markerLayer);
-      m.bindPopup(`<strong>${title}</strong><br>${addr}`);
+      let m = null;
+      if (markerLayer) {
+        m = L.marker([p.lat, p.lon]).addTo(markerLayer);
+        m.bindPopup(`<strong>${title}</strong><br>${addr}`);
+      }
 
       const li = document.createElement("li");
       li.className = "poi-item";
@@ -146,35 +194,49 @@ async function loadPlaces(city) {
       `;
 
       li.addEventListener("click", () => {
-        map.setView([p.lat, p.lon], 15);
-        m.openPopup();
+        if (map) map.setView([p.lat, p.lon], 15);
+        if (m) m.openPopup();
       });
 
       list.appendChild(li);
     });
 
-  } catch {
+  } catch (err) {
+    console.error(err);
     list.innerHTML = `<li class="poi-loading">Fehler beim Laden der Sehenswürdigkeiten.</li>`;
   }
 }
 
-/* -------- WIRING -------- */
+/* -------------------- WIRING -------------------- */
 
-function getSelectedCity() {
-  const select = document.getElementById("citySelect");
-  return select?.value || DEFAULT_CITY;
+let _debounce = null;
+
+function updateArrivalModules() {
+  clearTimeout(_debounce);
+  _debounce = setTimeout(() => {
+    loadWeatherForArrival();
+    loadPlacesForArrival();
+  }, 250);
 }
 
-function onCityChange() {
-  const city = getSelectedCity();
-  loadWeather(city);
-  loadPlaces(city);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const select = document.getElementById("citySelect");
-  if (select) {
-    select.addEventListener("change", onCityChange);
+document.addEventListener("DOMContentLoaded", async () => {
+  // util.js lädt Airports -> wir warten nur drauf
+  if (typeof ensureAirportsLoaded === "function") {
+    await ensureAirportsLoaded();
   }
-  onCityChange();
+
+  const arrivalInput = document.getElementById("arrivalSearch");
+
+  if (arrivalInput) {
+    arrivalInput.addEventListener("input", updateArrivalModules);
+    arrivalInput.addEventListener("change", updateArrivalModules);
+  }
+
+  // Wenn util.js nach Flug-Suche den Arrival fix gewählt hat
+  document.addEventListener("arrivalAirportSelected", () => {
+    updateArrivalModules();
+  });
+
+  // Initial
+  updateArrivalModules();
 });
