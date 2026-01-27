@@ -4,17 +4,6 @@ import requests
 
 weather_bp = Blueprint("weather_bp", __name__)
 
-CITY_COORDS = {
-    "Zürich": (47.3769, 8.5417),
-    "Basel": (47.5596, 7.5886),
-    "Bern": (46.9480, 7.4474),
-    "Genf": (46.2044, 6.1432),
-    "Lausanne": (46.5197, 6.6323),
-    "Luzern": (47.0502, 8.3093),
-    "St. Gallen": (47.4245, 9.3767),
-    "Lugano": (46.0037, 8.9511),
-}
-
 WEATHER_CODE_TEXT = {
     0: "Klar",
     1: "Überwiegend klar",
@@ -37,12 +26,8 @@ WEATHER_CODE_TEXT = {
     95: "Gewitter",
 }
 
-CACHE_TTL_SECONDS = 600  # 10 Minuten
-_cache = {}  # city -> (timestamp, payload)
-
-
-def get_cities():
-    return list(CITY_COORDS.keys())
+CACHE_TTL_SECONDS = 600
+_cache = {}  # cache_key -> (timestamp, payload)
 
 
 def _fetch_weather(lat: float, lon: float) -> dict:
@@ -50,15 +35,9 @@ def _fetch_weather(lat: float, lon: float) -> dict:
     params = {
         "latitude": lat,
         "longitude": lon,
-
-        # aktuell
         "current": "temperature_2m,weather_code,wind_speed_10m",
-
-        # nächste 5 Tage (inkl. heute)
         "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum",
         "forecast_days": 5,
-
-        # nötig sobald daily genutzt wird
         "timezone": "auto",
     }
     r = requests.get(url, params=params, timeout=10)
@@ -66,22 +45,26 @@ def _fetch_weather(lat: float, lon: float) -> dict:
     return r.json()
 
 
-
 @weather_bp.get("/api/weather")
 def api_weather():
-    city = request.args.get("city", "")
+    lat = request.args.get("lat", type=float)
+    lon = request.args.get("lon", type=float)
+    label = request.args.get("label", "") or "Ort"
 
-    if city not in CITY_COORDS:
-        return jsonify({"error": "Unbekannte Stadt"}), 400
+    if lat is None or lon is None:
+        return jsonify({"error": "Bitte lat und lon als Query Params senden"}), 400
 
+    if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+        return jsonify({"error": "Ungültige Koordinaten"}), 400
+
+    cache_key = f"{lat:.4f},{lon:.4f}"
     now = time.time()
-    cached = _cache.get(city)
+
+    cached = _cache.get(cache_key)
     if cached:
         ts, payload = cached
         if now - ts < CACHE_TTL_SECONDS:
             return jsonify(payload)
-
-    lat, lon = CITY_COORDS[city]
 
     try:
         raw = _fetch_weather(lat, lon)
@@ -90,6 +73,7 @@ def api_weather():
 
     current = raw.get("current", {})
     code = current.get("weather_code")
+
     daily = raw.get("daily", {})
     times = daily.get("time", [])
     tmax = daily.get("temperature_2m_max", [])
@@ -101,7 +85,7 @@ def api_weather():
     for i in range(min(len(times), len(tmax), len(tmin), len(dcode))):
         code_i = dcode[i]
         forecast.append({
-            "date": times[i],  # ISO Datum
+            "date": times[i],
             "tmax": tmax[i],
             "tmin": tmin[i],
             "weather_code": code_i,
@@ -110,7 +94,9 @@ def api_weather():
         })
 
     payload = {
-        "city": city,
+        "label": label,
+        "lat": lat,
+        "lon": lon,
         "temperature": current.get("temperature_2m"),
         "wind": current.get("wind_speed_10m"),
         "weather_code": code,
@@ -119,5 +105,5 @@ def api_weather():
         "forecast": forecast,
     }
 
-    _cache[city] = (now, payload)
+    _cache[cache_key] = (now, payload)
     return jsonify(payload)

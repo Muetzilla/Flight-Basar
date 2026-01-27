@@ -8,7 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-  {% block head %}{% endblock %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 </head>
 
 <body data-geoapify-key="{{ geoapify_key|default('') }}">
@@ -16,10 +17,17 @@
     <a href="{{ url_for('index') }}" class="homeButton"> <h1>✈ Flug Basar</h1></a>
   </header>
 
-  {% block content %}{% endblock %}
+  <main class="layout">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "footer.html" %}
 
   {% block scripts %}{% endblock %}
-    {% include "footer.html" %}
 
+
+  <!-- Scripts genau 1x laden -->
+  <script src="{{ url_for('static', filename='js/util.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
 </body>
 </html>
