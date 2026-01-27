@@ -132,9 +132,15 @@ async function callSearchApi() {
     return;
   }
 
-  // Optional: Input sauber formatieren
+  // Input sauber formatieren (damit UI schön ist)
   departureInput.value = airportDisplayName(depAirport);
   arrivalInput.value = airportDisplayName(arrAirport);
+
+  // ✅ WICHTIG: Event immer feuern, sobald das Ziel eindeutig ist
+  // Dadurch laden Wetter + Sehenswürdigkeiten auch dann, wenn keine Flüge gefunden werden.
+  document.dispatchEvent(
+    new CustomEvent("arrivalAirportSelected", { detail: { airport: arrAirport } })
+  );
 
   try {
     const res = await fetch(`/flights/${depAirport.code}/${arrAirport.code}`, { method: "GET" });
@@ -143,15 +149,24 @@ async function callSearchApi() {
     const data = await res.json();
     renderFlights(data, depAirport.code, arrAirport.code);
 
-    // ✅ Signal an app.js: Ziel hat sich gesetzt
-    document.dispatchEvent(new CustomEvent("arrivalAirportSelected", { detail: { airport: arrAirport } }));
-
   } catch (err) {
+    // Flüge konnten nicht geladen werden oder es gibt keine
+    console.error(err);
+
+    // Optional: Results leeren und eine klare Meldung anzeigen
+    const resultsDiv = document.querySelector(".results");
+    if (resultsDiv) {
+      resultsDiv.innerHTML = `
+        <div class="flight-row">
+          Keine Flüge gefunden oder Fehler bei der Suche.
+        </div>
+      `;
+    }
+
     alert(
       `Bei der Suche der Flüge von ${depAirport.name} nach ${arrAirport.name} ist ein Fehler aufgetreten. ` +
       `Möglicherweise gibt es keine Flüge zwischen diesen Orten.`
     );
-    console.error(err);
   }
 }
 
