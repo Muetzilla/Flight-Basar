@@ -8,12 +8,16 @@ from flask import Flask, render_template, jsonify
 from weatherapi import weather_bp
 from placesapi import places_bp
 from util.api import call_flight_api
+from util.message_manager import save_message, list_messages
 
 app = Flask(__name__)
 app.secret_key = "geheim"
 
 app.register_blueprint(weather_bp)
 app.register_blueprint(places_bp)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_DIR = os.path.join(BASE_DIR, "db")
 
 @app.get("/")
 def index():
@@ -55,25 +59,7 @@ def post_kontakt():
     email = request.form.get("email")
     nachricht = request.form.get("nachricht")
 
-    timestamp = datetime.now().isoformat()
-
-    data = {
-        "name": name,
-        "email": email,
-        "nachricht": nachricht,
-        "timestamp": timestamp
-    }
-
-    hash_object = hashlib.md5(timestamp.encode())
-    hex_hash = hash_object.hexdigest()
-
-    if not os.path.exists("json"):
-        os.makedirs("json")
-
-    file_path = os.path.join("json", f"{hex_hash}_{timestamp.replace(':', '-')}.json")
-    with open(file_path, "w") as f:
-        json.dump(data, f, indent=4)
-
+    save_message(name, email, nachricht)
 
     flash("Danke für deine Nachricht!", "success")
     return redirect(url_for("get_kontakt"))
@@ -84,6 +70,10 @@ def api_time():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return jsonify({"server_time": now})
 
+@app.route("/messages", methods=["GET"])
+def messages():
+    msgs = list_messages()
+    return render_template("messages.html", msgs=msgs)
 
 if __name__ == "__main__":
     app.run(debug=True)

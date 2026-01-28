@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% set title = "Messages" %}
+{% set heading = "Messages" %}
+{% set sub = "Gespeicherte Kontakt-Nachrichten" %}
+
+{% block content %}
+  {% if not msgs %}
+    <p>Noch keine Messages gespeichert.</p>
+  {% else %}
+    <div class="page">
+      {% for m in msgs %}
+        <div class="message-card">
+          <div class="message-header">
+            <strong>{{ m.name }}</strong>
+            <span class="message-meta">{{ m.sent_at }}</span>
+          </div>
+          <p class="message-content">{{ m.nachricht }}</p>
+          <div class="message-meta" style="margin-top: 12px;">
+            <span class="mono">{{ m.email }}</span> | Datei: <span class="mono">{{ m._filename }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

@@ -499,6 +499,32 @@ main.layout{
   overflow-y: auto;
 }
 
+.message-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.message-meta {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.message-content {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
 /* Items */
 .poi-item{
   display: grid;
