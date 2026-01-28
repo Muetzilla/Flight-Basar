@@ -78,5 +78,12 @@ def post_kontakt():
     flash("Danke für deine Nachricht!", "success")
     return redirect(url_for("get_kontakt"))
 
+
+@app.route("/time", methods=["GET"])
+def api_time():
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return jsonify({"server_time": now})
+
+
 if __name__ == "__main__":
     app.run(debug=True)
