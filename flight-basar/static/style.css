@@ -6,6 +6,9 @@
   --border: rgba(15, 23, 42, 0.10);
   --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   --radius: 18px;
+
+  /* fehlte bei dir, wird aber genutzt */
+  --primary: #0f172a;
 }
 
 *{ box-sizing: border-box; }
@@ -34,9 +37,9 @@ header h1{
   letter-spacing: -0.2px;
 }
 
-.header-actions{
-  display: flex;
-  gap: 10px;
+.homeButton{
+  text-decoration: none;
+  color: black;
 }
 
 /* Buttons */
@@ -65,7 +68,7 @@ button.secondary:hover{
   background: rgba(15, 23, 42, 0.08);
 }
 
-/* Layout */
+/* Layout (passt zu <main class="layout">) */
 main.layout{
   max-width: 1200px;
   margin: 22px auto;
@@ -76,10 +79,12 @@ main.layout{
   align-items: start;
 }
 
-/* Suche bleibt schmal */
-.search-card{
-  max-width: 520px;
+/* WICHTIG: Abstand zwischen euren Modulen */
+.infos{
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 /* Cards */
@@ -94,6 +99,7 @@ main.layout{
 /* Search card */
 .search-card{
   padding: 18px;
+  width: 100%;
 }
 
 .search-fields{
@@ -135,14 +141,27 @@ main.layout{
   }
 }
 
-/* Results */
-.results{
-  margin-top: 16px;
+/* Results: fixe Hoehe + Scroll */
+.search-card .results{
+  margin-top: 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7.5px;
+
+  max-height: 320px;   /* anpassen nach Geschmack */
+  overflow-y: auto;
+  padding-right: 8px;  /* Scrollbar ueberdeckt nichts */
 }
 
+/* Wenn noch keine Fluege da sind: keine leere Box */
+.search-card .results:empty{
+  margin-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  padding-right: 0;
+}
+
+/* (Falls ihr irgendwo .result-row nutzt) */
 .result-row{
   display: grid;
   grid-template-columns: 1fr 1fr auto auto;
@@ -171,47 +190,49 @@ main.layout{
   border-radius: 12px;
   box-shadow: none;
 }
-    .flight-row {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      align-items: center;
-      gap: 20px;
-      background-color: #fff;
-      padding: 16px 20px;
-      border-radius: 12px;
-      margin-top: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border: 1px solid var(--border);
-      transition: all 0.2s ease-in-out;
-    }
 
-    .flight-row:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.07);
-    }
+/* Flight rows (aus util.js renderFlights) */
+.flight-row{
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 20px;
+  background-color: #fff;
+  padding: 8px 10px;
+  border-radius: 12px;
+  margin-top: 0; /* vorher 4px */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease-in-out;
+}
 
-    .flight-row .route {
-      font-size: 16px;
-      font-weight: 500;
-    }
+.flight-row:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+}
 
-    .flight-row .route strong {
-        font-weight: 700;
-    }
+.flight-row .route{
+  font-size: 14px; /* kompakter */
+  font-weight: 500;
+}
 
-    .flight-row .time {
-      font-size: 14px;
-      color: var(--muted);
-    }
+.flight-row .route strong{
+  font-weight: 700;
+}
 
-    .flight-row .buy-btn {
-      background-color: var(--primary);
-      color: white;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
+.flight-row .time{
+  font-size: 12px; /* kompakter */
+  color: var(--muted);
+}
+
+.flight-row .buy-btn{
+  background-color: var(--primary) !important;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 @media (max-width: 520px){
   .result-row{
@@ -221,6 +242,11 @@ main.layout{
   .result-row .badge,
   .result-row button{
     justify-self: start;
+  }
+
+  .flight-row{
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 
@@ -529,25 +555,33 @@ main.layout{
     height: 280px;
   }
 }
+
+/* Misc */
 .muted{
   margin-top: 10px;
   font-size: 12px;
   opacity: 0.7;
 }
 
-
-.search-select-wrapper {
+.search-select-wrapper{
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-option {
+/* Achtung: option styling ist browser-limitiert, aber lassen wir drin */
+option{
   background-color: white;
   padding: 4px;
   color: blue;
   margin-bottom: 1px;
-   font-size: 18px;
+  font-size: 18px;
   cursor: pointer;
+}
+
+.center{
+  margin: auto;
+  width: 50%;
+  padding: 10px;
 }

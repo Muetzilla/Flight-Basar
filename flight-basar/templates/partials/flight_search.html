@@ -1,23 +1,29 @@
- <section class="search-card">
-      <div class="search-fields">
-        <div class="field">
-          <label for="departureSearch">Startort</label>
-          <input id="departureSearch" type="text" placeholder="Suche Startflughafen" aria-label="Suche Startflughafen" list="departureAirportList"/>
-          <datalist id="departureAirportList">
-          </datalist>
-        </div>
-        <div class="field">
-          <label for="arrivalSearch">Zielort</label>
-          <input id="arrivalSearch" type="text" placeholder="Suche Zielflughafen" aria-label="Suche Zielflughafen" list="arrivalAirportList"/>
-          <datalist id="arrivalAirportList">
-          </datalist>
-        </div>
-        <div class="field" style="justify-content:flex-end">
-          <button id="searchBtn" type="button">Flüge suchen</button>
-        </div>
-      </div>
+<section class="search-card">
+  <div class="search-fields">
+    <div class="field">
+      <label for="departureSearch">Startort</label>
+      <input id="departureSearch"
+             type="text"
+             placeholder="Suche Startflughafen"
+             aria-label="Suche Startflughafen"
+             list="departureAirportList" />
+      <datalist id="departureAirportList"></datalist>
+    </div>
 
-      <div class="results">
-      </div>
-    </section>
-    <script src="{{ url_for('static', filename='js/util.js') }}"></script>
+    <div class="field">
+      <label for="arrivalSearch">Zielort</label>
+      <input id="arrivalSearch"
+             type="text"
+             placeholder="Suche Zielflughafen"
+             aria-label="Suche Zielflughafen"
+             list="arrivalAirportList" />
+      <datalist id="arrivalAirportList"></datalist>
+    </div>
+
+    <div class="field" style="justify-content:flex-end">
+      <button id="searchBtn" type="button">Flüge suchen</button>
+    </div>
+  </div>
+
+  <div class="results"></div>
+</section>

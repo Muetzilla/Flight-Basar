@@ -2,38 +2,14 @@
 
 {% block title %}Flug Basar{% endblock %}
 
-{% block head %}
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% block content %}
+  <div class="infos">
+    {% include "partials/flight_search.html" %}
+    {% include "partials/weather.html" %}
+    {% include "partials/places.html" %}
+  </div>
 {% endblock %}
-</head>
-<body>
-  <header>
-    <h1>✈ Flight Basar</h1>
-    <div class="header-actions">
-      <button class="secondary">Route speichern</button>
-      <button class="secondary">Gespeicherte Routen</button>
-    </div>
-  </header>
 
-  <main>
-
-      {% block content %}
-      {% include "partials/flight_search.html" %}
-      {% include "partials/weather.html" %}
-      {% include "partials/places.html" %}
-      {% endblock %}
-
-  {% block scripts %}
-<!--    <script>-->
-<!--      window.APP_CONFIG = {-->
-<!--        cities: {{ cities|tojson }},-->
-<!--        defaultCity: "Zürich"-->
-<!--      };-->
-<!--    </script>-->
-  {% endblock %}
-  </main>
-<!--    <script src="{{ url_for('static', filename='js/util.js') }}"></script>-->
-<!--    <script src="{{ url_for('static', filename='app.js') }}"></script>-->
-</body>
-</html>
+{% block scripts %}
+  {# Optional: nur falls ihr spaeter page spezifische Scripts braucht #}
+{% endblock %}

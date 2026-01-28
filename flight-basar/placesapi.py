@@ -1,50 +1,103 @@
-# placesapi.py
 import os
 import requests
+from functools import lru_cache
 from flask import Blueprint, request, jsonify
 
 places_bp = Blueprint("places", __name__)
 
-# Nimm hier dieselbe City Liste wie beim Wetter
-CITY_COORDS = {
-    "Zürich": {"lat": 47.3769, "lon": 8.5417},
-    "Basel": {"lat": 47.5596, "lon": 7.5886},
-    "Bern": {"lat": 46.9480, "lon": 7.4474},
-    "Genf": {"lat": 46.2044, "lon": 6.1432},
-    "Luzern": {"lat": 47.0502, "lon": 8.3093},
-}
-
-# Kategorien für “Sehenswürdigkeiten”
-# Geoapify Kategorien sind hierarchisch; tourism.* ist genau dafür gedacht. :contentReference[oaicite:1]{index=1}
 DEFAULT_CATEGORIES = "tourism.sights,tourism.attraction"
+
+
+@lru_cache(maxsize=256)
+def geocode_city(city: str, api_key: str, countrycode: str = ""):
+    url = "https://api.geoapify.com/v1/geocode/search"
+    params = {
+        "text": city,
+        "type": "city",
+        "limit": 1,
+        "format": "json",
+        "apiKey": api_key,
+    }
+
+    if countrycode:
+        params["filter"] = f"countrycode:{countrycode.lower()}"
+
+    r = requests.get(url, params=params, timeout=10)
+    if r.status_code != 200:
+        raise RuntimeError(f"Geoapify Geocoding Fehler: {r.status_code} {r.text}")
+
+    data = r.json()
+    results = data.get("results", [])
+    if not results:
+        return None
+
+    first = results[0]
+    return {
+        "lat": first.get("lat"),
+        "lon": first.get("lon"),
+        "formatted": first.get("formatted", ""),
+        "country": first.get("country", ""),
+        "city": first.get("city", ""),
+    }
+
 
 @places_bp.get("/api/places")
 def get_places():
-    city = request.args.get("city", "Zürich")
-    coords = CITY_COORDS.get(city, CITY_COORDS["Zürich"])
-    lat = coords["lat"]
-    lon = coords["lon"]
+    city = (request.args.get("city") or "Zürich").strip()
+    country = (request.args.get("country") or "").strip()
+    categories = (request.args.get("categories") or DEFAULT_CATEGORIES).strip()
+
+    try:
+        radius = int(request.args.get("radius") or 6000)
+    except ValueError:
+        radius = 6000
+
+    try:
+        limit = int(request.args.get("limit") or 12)
+    except ValueError:
+        limit = 12
 
     api_key = os.environ.get("GEOAPIFY_API_KEY")
     if not api_key:
         return jsonify({"error": "GEOAPIFY_API_KEY fehlt (Environment Variable)."}), 500
 
-    # Places API Endpoint :contentReference[oaicite:2]{index=2}
-    url = "https://api.geoapify.com/v2/places"
+    try:
+        coords = geocode_city(city, api_key, countrycode=country)
+        if not coords:
+            return jsonify({
+                "error": "Stadt nicht gefunden",
+                "city": city,
+                "hint": "Probiere zB 'Paris' oder nutze country=fr"
+            }), 404
 
-    # Achtung: circle Filter erwartet lon,lat,radiusMeters :contentReference[oaicite:3]{index=3}
+        lat = coords["lat"]
+        lon = coords["lon"]
+
+        if lat is None or lon is None:
+            return jsonify({"error": "Geocoding liefert keine gültigen Koordinaten"}), 502
+
+    except Exception as e:
+        return jsonify({"error": "City Geocoding fehlgeschlagen", "details": str(e)}), 502
+
+    url = "https://api.geoapify.com/v2/places"
     params = {
-        "categories": DEFAULT_CATEGORIES,
-        "filter": f"circle:{lon},{lat},6000",
+        "categories": categories,
+        "filter": f"circle:{lon},{lat},{radius}",
         "bias": f"proximity:{lon},{lat}",
-        "limit": 12,
+        "limit": limit,
         "lang": "de",
         "apiKey": api_key,
     }
 
-    r = requests.get(url, params=params, timeout=10)
-    r.raise_for_status()
-    data = r.json()  # GeoJSON FeatureCollection :contentReference[oaicite:4]{index=4}
+    try:
+        r = requests.get(url, params=params, timeout=10)
+        if r.status_code != 200:
+            return jsonify({"error": "Geoapify Places Fehler", "status": r.status_code, "details": r.text}), 502
+
+        data = r.json()
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": "Geoapify Places Request fehlgeschlagen", "details": str(e)}), 502
 
     places = []
     for f in data.get("features", []):

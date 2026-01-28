@@ -1,24 +1,41 @@
 async function callSearchApi() {
-    const departureInput = document.getElementById("departureSearch");
-    const arrivalInput = document.getElementById("arrivalSearch");
+  const departureInput = document.getElementById("departureSearch");
+  const arrivalInput = document.getElementById("arrivalSearch");
 
-    const departureAirportCode = getAirportCode(departureInput.value);
-    const arrivalAirportCode = getAirportCode(arrivalInput.value);
+  const departureAirportCode = getAirportCode(departureInput.value);
+  const arrivalAirportCode = getAirportCode(arrivalInput.value);
 
-    if (!departureAirportCode || !arrivalAirportCode) {
-        alert("Bitte wählen Sie einen gültigen Start- und Zielflughafen aus der Liste.");
-        return;
-    }
+  if (!departureAirportCode || !arrivalAirportCode) {
+    alert("Bitte wählen Sie einen gültigen Start- und Zielflughafen aus der Liste.");
+    return;
+  }
+
+  // ✅ NEU: Arrival-Airport als Objekt finden und Event feuern
+  // Dadurch kann app.js Wetter/Sehenswürdigkeiten laden – auch wenn es keine Flüge gibt.
+  const arrAirportObj = ALL_AIRPORTS.find(a => a.code === arrivalAirportCode) || null;
+  if (arrAirportObj) {
+    document.dispatchEvent(
+      new CustomEvent("arrivalAirportSelected", { detail: { airport: arrAirportObj } })
+    );
+  }
 
   try {
-    const res = await fetch('/flights/'+departureAirportCode+'/' + arrivalAirportCode, { method: 'GET' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const res = await fetch("/flights/" + departureAirportCode + "/" + arrivalAirportCode, { method: "GET" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+
     const data = await res.json();
     renderFlights(data, departureAirportCode, arrivalAirportCode);
+
   } catch (err) {
-    alert("Bei der Suche der Flüge von " + getAirportName(departureAirportCode) + "nach " + getAirportName(arrivalAirportCode) +" ist ein Fehler aufgetreten. Möglicherweise gibt es keine Flüge zwischen diesen Orten");
-    console.error(err)
-    }
+    alert(
+      "Bei der Suche der Flüge von " +
+      getAirportName(departureAirportCode) +
+      " nach " +
+      getAirportName(arrivalAirportCode) +
+      " ist ein Fehler aufgetreten. Möglicherweise gibt es keine Flüge zwischen diesen Orten"
+    );
+    console.error(err);
+  }
 }
 
 function getTimezoneAbbreviation(dateString, timeZone) {

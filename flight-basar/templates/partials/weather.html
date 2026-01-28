@@ -1,15 +1,11 @@
 <section class="weather-wide">
   <div class="info-card weather-panel">
     <div class="weather-header">
-      <h3 id="weatherTitle">🌤 Wetter</h3>
-
+      <h3 id="weatherTitle">🌤 Wetter am Ziel</h3>
       <div class="weather-controls">
-        <label for="citySelect">Stadt</label>
-        <select id="citySelect">
-          {% for c in cities %}
-            <option value="{{ c }}" {% if c == "Zürich" %}selected{% endif %}>{{ c }}</option>
-          {% endfor %}
-        </select>
+        <div style="font-size: 0.9rem; opacity: 0.8;">
+          Wird automatisch anhand vom Zielort geladen
+        </div>
       </div>
     </div>
 
@@ -18,7 +14,7 @@
         <div id="weatherIcon" class="weather-icon">⛅</div>
         <div>
           <div id="weatherNowTemp" class="weather-temp">–°C</div>
-          <div id="weatherText" class="weather-desc">Lade Wetterdaten...</div>
+          <div id="weatherText" class="weather-desc">Bitte Ziel auswählen...</div>
         </div>
       </div>
       <div id="weatherMeta" class="weather-meta"></div>
@@ -31,4 +27,3 @@
     </div>
   </div>
 </section>
-<script src="{{ url_for('static', filename='app.js') }}"></script>
