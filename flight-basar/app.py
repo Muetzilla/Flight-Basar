@@ -67,10 +67,10 @@ def post_kontakt():
     hash_object = hashlib.md5(timestamp.encode())
     hex_hash = hash_object.hexdigest()
 
-    if not os.path.exists("json"):
-        os.makedirs("json")
+    if not os.path.exists("db"):
+        os.makedirs("db")
 
-    file_path = os.path.join("json", f"{hex_hash}_{timestamp.replace(':', '-')}.json")
+    file_path = os.path.join("db", f"{hex_hash}.json")
     with open(file_path, "w") as f:
         json.dump(data, f, indent=4)
 
