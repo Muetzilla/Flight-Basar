@@ -7,45 +7,37 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
- <header>
-    <a href="{{ url_for('index') }}" class="homeButton"> <h1>✈ Flug Basar</h1></a>
-  </header>
-<div class="center">
-<h1>Kontakt</h1>
-<button onclick="window.location.href='mailto:help@flightbasar.gov?subject=Problem%20mit%20dem%20Flight%20Basar'">
-   Kontaktieren sie uns via E-Mail
-</button>
-<h2>Schreiben sie uns eine Nachricht</h2>
-<form action="/kontakt" method="post">
-    <label>
-        Name:
-        <input type="text" name="name" required>
-    </label>
-    <br>
+ {% extends "base.html" %}
+{% set title = "Kontakt" %}
 
-    <label>
-        E-Mail:
-        <input type="email" name="email" required>
-    </label>
-    <br>
+{% block content %}
+<div class="info-card" style="max-width: 600px; margin: auto;">
+    <h3>Kontaktieren Sie uns</h3>
+    <p>Haben Sie Fragen oder Anregungen? Schreiben Sie uns eine Nachricht über das Formular oder kontaktieren Sie uns direkt per E-Mail.</p>
 
-    <label>
-        Nachricht:
-        <textarea name="nachricht" required></textarea>
-    </label>
-    <br>
+    <div style="margin-top: 20px; margin-bottom: 20px;">
+        <a href="mailto:help@flightbasar.gov?subject=Problem%20mit%20dem%20Flight%20Basar" class="button secondary">
+            E-Mail schreiben
+        </a>
+    </div>
 
-    <button type="submit">Absenden</button>
-</form>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <script>
-      alert("{{ messages[0] }}");
-    </script>
-  {% endif %}
-{% endwith %}
+
+    <form action="/kontakt" method="post">
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="field">
+            <label for="email">E-Mail</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="field">
+            <label for="nachricht">Nachricht</label>
+            <textarea id="nachricht" name="nachricht" rows="5" required></textarea>
+        </div>
+        <button type="submit" style="margin-top: 10px;">Nachricht senden</button>
+    </form>
 </div>
-{% include "footer.html" %}
-
+{% endblock %}
 </body>
 </html>
