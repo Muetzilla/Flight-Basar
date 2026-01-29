@@ -21,11 +21,7 @@ DB_DIR = os.path.join(BASE_DIR, "db")
 
 @app.get("/")
 def index():
-    geoapify_key = os.getenv("GEOAPIFY_API_KEY", "")
-    return render_template(
-        "index.html",
-        geoapify_key=geoapify_key
-    )
+    return render_template("index.html")
 
 @app.get("/flights/<departure_destination>/<arrival_destination>")
 def get_flights(departure_destination, arrival_destination):

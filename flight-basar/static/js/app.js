@@ -7,9 +7,6 @@
 
 /* -------------------- KONFIG -------------------- */
 
-// Geoapify Key kommt aus dem HTML: <body data-geoapify-key="...">
-const GEOAPIFY_KEY = document.body.dataset.geoapifyKey || "";
-
 // Fallback Stadt, falls wir keinen Airport haben
 const DEFAULT_CITY = "Zürich";
 
@@ -196,25 +193,18 @@ async function loadWeatherForSelectedArrival() {
    ========================================================= */
 
 function initMap(center) {
-  // Leaflet muss global geladen sein (Script in base.html)
   if (typeof L === "undefined") {
     console.error("Leaflet (L) ist nicht geladen. Prüfe base.html!");
     return;
   }
 
-  // Map erstellen, Center setzen
   map = L.map("poiMap", { scrollWheelZoom: false }).setView([center.lat, center.lon], 13);
 
-  // Geoapify Tiles
-  const style = "osm-bright";
-  const tilesUrl = `https://maps.geoapify.com/v1/tile/${style}/{z}/{x}/{y}.png?apiKey=${encodeURIComponent(GEOAPIFY_KEY)}`;
-
-  L.tileLayer(tilesUrl, {
-    maxZoom: 20,
-    attribution: "Map data © OpenStreetMap contributors · Powered by Geoapify"
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 
-  // Eigener Layer fuer Marker
   markerLayer = L.layerGroup().addTo(map);
 }
 
