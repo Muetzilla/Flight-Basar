@@ -12,34 +12,34 @@
         <a href="{{ url_for('index') }}" class="homeButton"> <h1>✈ Flug Basar</h1></a>
      </header>
         <div class="center">
-            <h1>Help</h1>
-            <i>"Gib einem Mann einen Fisch und du ernährst ihn für einen Tag. Lehre einen Mann zu fischen und du ernährst ihn für sein Leben."</i> - Konfuzius
-            <br><br>
-            Daher praktizieren wir Hilfe zur Selbsthilfe.
-            <br><br>
-            Folgen Sie den Schritten zur Problemlösung:
-            <br>
-            <br>
-            1.)
-            <br><br>
-             <a href="https://chat.openai.com" target="_blank" class="secondary">
-                <button>Schritt 1</button>
-            </a>
-            <br><br>
-            2.)
-            <br><br>
-            <a href="{{ url_for('get_kontakt') }}" class="secondary">
-                <button>Schritt 2</button>
-            </a>
-            <br><br>
-            3.)
-            <br><br>
-            Gehen Sie in die Kantine und holen Sie sich einen Kaffee.
-            <br><br>
-            4.)
-            <br><br>
-            Wenn bis jetzt noch nichts geholfen hat, dann opfern Sie bitte dem IT Gott.
-        </div>
+            <div class="info-card" style="max-width: 600px; margin: 30px auto;">
+                <h3 style="text-align: center;">Hilfe zur Selbsthilfe</h3>
+                <p style="text-align: center; margin-bottom: 20px;">
+                    <em>"Gib einem Mann einen Fisch und du ernährst ihn für einen Tag. Lehre einen Mann zu fischen und du ernährst ihn für sein Leben."</em><br>
+                    - Konfuzius
+                </p>
+                <p>
+                    Folgen Sie den Schritten zur Problemlösung:
+                </p>
+                <div style="margin-top: 25px; text-align: left; padding: 0 20px;">
+                    <div style="margin-bottom: 20px;">
+                        <strong>Schritt 1</strong>
+                        <p>Besuchen Sie eine <a href="https://chat.openai.com" target="_blank">externe Hilfeseite</a>, um eine Lösung zu finden.</p>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Schritt 2</strong>
+                        <p>Wenn Schritt 1 nicht erfolgreich war, <a href="{{ url_for('get_kontakt') }}">kontaktieren Sie uns</a> bitte.</p>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Schritt 3</strong>
+                        <p>Gehen Sie in die Kantine und holen Sie sich einen Kaffee.</p>
+                    </div>
+                    <div>
+                        <strong>Schritt 4</strong>
+                        <p>Wenn bis jetzt noch nichts geholfen hat, dann opfern Sie bitte dem IT-Gott.</p>
+                    </div>
+                </div>
+            </div>
     {% include "footer.html" %}
     </body>
 </html>
