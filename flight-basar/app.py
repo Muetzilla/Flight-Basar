@@ -32,7 +32,6 @@ def get_flights(departure_destination, arrival_destination):
     except Exception as e:
         return jsonify({"error": "Flight API nicht erreichbar", "details": str(e)}), 502
 
-
 @app.get("/help")
 def get_help():
     return render_template("help.html")
@@ -60,7 +59,6 @@ def post_kontakt():
     flash("Danke für deine Nachricht!", "success")
     return redirect(url_for("get_kontakt"))
 
-
 @app.route("/time", methods=["GET"])
 def api_time():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -72,4 +70,4 @@ def messages():
     return render_template("messages.html", msgs=msgs)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5005)
